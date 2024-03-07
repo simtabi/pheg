@@ -27,7 +27,6 @@
         "ext-bcmath": "*",
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
-        "ext-apache": "*",
         "symfony/filesystem": "*",
         "guzzlehttp/guzzle": "*",
         "myclabs/deep-copy": "*",
@@ -63,6 +62,7 @@
         "soundasleep/html2text": "*"
     },
     "require-dev": {
+        "ext-apache": "*",
         "symfony/translation": "*",
         "symfony/yaml": "*",
         "aeon-php/calendar": "*",
