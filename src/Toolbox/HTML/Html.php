@@ -283,7 +283,7 @@ final class Html
         return Html2Text::convert($html, $config);
     }
 
-    public function htmlAttributeGenerator(): HtmlAttributeGenerator
+    public function generateAttributes(): HtmlAttributeGenerator
     {
         return new HtmlAttributeGenerator;
     }
