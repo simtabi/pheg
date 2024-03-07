@@ -57,7 +57,6 @@
         "spatie/url": "*",
         "justinrainbow/json-schema": "*",
         "seld/jsonlint": "*",
-        "coduo/php-humanizer": "*",
         "rinvex/countries": "*",
         "soundasleep/html2text": "*"
     },
