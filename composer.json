@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": ">=8.2",
         "ext-gd": "*",
         "ext-dom": "*",
         "ext-libxml": "*",
@@ -49,7 +49,7 @@
         "ezyang/htmlpurifier": "@dev",
         "fightbulc/moment": "@dev",
         "maxakawizard/json-collection-parser": "@dev",
-        "cerbero/json-objects": "@dev",
+        "simtabi/json-objects": "@dev",
         "symfony/uid": "@dev",
         "jimmiw/php-time-ago": "@dev",
         "sokil/php-isocodes": "@dev",
