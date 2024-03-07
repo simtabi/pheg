@@ -320,7 +320,7 @@ final class Html
 
         $placeholders = [];
         foreach ($result as $key => $match) {
-            $placeholders["{:" . trim($key) . "_" . Str::slug($match, "_") . "}"] = $match;
+            $placeholders["{:" . trim($key) . "_" . pheg()->str()->slugify($match, "_") . "}"] = $match;
         }
 
         // extract all placeholders

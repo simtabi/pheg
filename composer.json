@@ -58,6 +58,7 @@
         "justinrainbow/json-schema": "@dev",
         "seld/jsonlint": "@dev",
         "coduo/php-humanizer": "@dev",
+        "cocur/slugify": "@dev",
         "rinvex/countries": "@dev",
         "soundasleep/html2text": "@dev"
     },
