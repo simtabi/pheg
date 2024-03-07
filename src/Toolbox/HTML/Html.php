@@ -283,6 +283,11 @@ final class Html
         return Html2Text::convert($html, $config);
     }
 
+    public function htmlAttributeGenerator(): HtmlAttributeGenerator
+    {
+        return new HtmlAttributeGenerator;
+    }
+
     public function htmlCleaner(): HtmlCleaner
     {
         return new HtmlCleaner;
@@ -292,6 +297,114 @@ final class Html
     {
         return new Form;
     }
+
+   public function extractAndSplit(string $string, array $replacements = []): array
+    {
+        // Match all occurrences of text enclosed in square brackets
+        preg_match_all("/\{(.*?)\}/", $string, $matches);
+
+        $result = [];
+        foreach ($matches[1] as $match) {
+            // Split the matched string at '/'
+            $parts = explode("/", $match);
+
+            // If there is more than one part, use the first part as the key and the remaining parts as the value (joined back together)
+            if (count($parts) > 1) {
+                $key          = array_shift($parts);
+                $result[$key] = implode("/", $parts);
+            } else {
+                // If there's only one part, use it both as the key and the value
+                $result[$match] = $match;
+            }
+        }
+
+        $placeholders = [];
+        foreach ($result as $key => $match) {
+            $placeholders["{:" . trim($key) . "_" . Str::slug($match, "_") . "}"] = $match;
+        }
+
+        // extract all placeholders
+        $extractTextInCurlyBrackets = function ($string) {
+            $extracted = [];
+            preg_match_all("/\{[^}]+\}/", $string, $extracted);
+            return $extracted[0];
+        };
+
+        $replaceTextInCurlyBrackets = function (string $text, array $placeholders) {
+            $count = 0;
+            return preg_replace_callback("/\{([^}]+)\}/", function ($matches) use (&$count, $placeholders) {
+                $placeholder = $placeholders[$count];
+                $count++;
+                return $placeholder;
+            },
+                $text
+            );
+        };
+
+        $replaced = [];
+        for ($i = 0; $i < count($replacements); $i++) {
+            $plc = array_values($placeholders);
+            for ($j = 0; $j < count($plc); $j++) {
+                $replaced[] = sprintf($replacements[$i], $plc[$j]);
+            }
+        }
+
+        $modified = $replaceTextInCurlyBrackets($string, array_keys($placeholders));
+        return [
+            "original"     => $string,
+            "modified"     => $modified,
+            "extracted"    => $extractTextInCurlyBrackets($string),
+            "placeholders" => $placeholders,
+            "replaced"     => $replaceTextInCurlyBrackets($modified, $replaced),
+        ];
+    }
+
+   public function replacePlaceholdersAndCollect(string $content, array $replacements): array
+    {
+        libxml_use_internal_errors(true); // Suppress libXML errors
+
+        $dom = new \DOMDocument();
+        $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $xpath = new \DOMXPath($dom);
+        $nodes = $xpath->query('//text()');
+
+        $substitutedTexts = []; // Array to log replaced texts
+
+        // Function to perform replacements and log them
+        $performReplacement = function ($text) use ($replacements, &$substitutedTexts) {
+            foreach ($replacements as $placeholder => $replacement) {
+                if (strpos($text, $placeholder) !== false) {
+                    $substitutedTexts[] = $replacement; // Log the replacement
+                    $text               = str_replace($placeholder, $replacement, $text);
+                }
+            }
+            return $text;
+        };
+
+        if ($nodes->length > 0) {
+            foreach ($nodes as $node) {
+                $node->nodeValue = $performReplacement($node->nodeValue);
+            }
+            $modifiedContent = $dom->saveHTML();
+        } else {
+            // Fallback for plain text replacement
+            $modifiedContent = $performReplacement($content);
+        }
+
+        libxml_clear_errors(); // Clear any libXML errors encountered
+
+        // Conditionally remove doctype and HTML tags if the original was plain text
+        if (strip_tags($content) === $content) {
+            $content = strip_tags($content);
+        }
+
+        return [
+            'original' => $content,
+            'modified' => $modifiedContent,
+            'replacements' => $substitutedTexts,
+        ];
+    }
+
 
     public function clean(array|string|null $dirty, array|string $config = null, bool $enableLessSecureWeb = false): ?string
     {
