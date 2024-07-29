@@ -8,16 +8,17 @@ class CoreTools
     /**
      * Default region for telephone utilities
      */
-    public const DEFAULT_REGION = 'KE';
+    public const string DEFAULT_REGION = 'KE';
 
-    public const PHEG_DIR_PATH = __DIR__.'/../../';
+    public const string PHEG_DIR_PATH = __DIR__.'/../../';
 
     /**
      * @var string
      */
-    protected static $defaultRegion = 'KE';
+    protected static string $defaultRegion = 'KE';
 
-    public static function getRootPath(int $levels = 2){
+    public static function getRootPath(int $levels = 2): string
+    {
         return dirname( __DIR__ , $levels);
     }
 

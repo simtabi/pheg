@@ -14,12 +14,12 @@ class Supports
     use FormHelpersTrait;
 
     private Loader $loader;
-    private Dot    $data;
-    private Dot    $colors;
+    private Dot $data;
+    private Dot $colors;
     private string $key;
-    private        $default = null;
-    private Pheg   $pheg;
-    private bool   $asArray = true;
+    private string|null $default = null;
+    private Pheg $pheg;
+    private bool $asArray = true;
     private string $fileName;
 
     /**
@@ -28,9 +28,10 @@ class Supports
      * @version      1.0
      * @since        1.0
      */
-    private static $instance;
+    private static self $instance;
 
-    public static function getInstance(Pheg $pheg) {
+    public static function getInstance(Pheg $pheg): self
+    {
         if (isset(self::$instance) && !is_null(self::$instance)) {
             return self::$instance;
         } else {
@@ -60,19 +61,19 @@ class Supports
     }
 
     /**
-     * @param mixed $key
+     * @param string $key
      * @return self
      */
-    public function setKey($key): self
+    public function setKey(string $key): self
     {
         $this->key = trim($key);
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -103,24 +104,24 @@ class Supports
     }
 
     /**
-     * @param mixed $fileName
+     * @param string $fileName
      * @return self
      */
-    public function setFileName($fileName): self
+    public function setFileName(string $fileName): self
     {
         $this->fileName = trim($fileName);
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->fileName;
     }
 
-    public function getData()
+    public function getData(): object|array
     {
 
         $data = [];

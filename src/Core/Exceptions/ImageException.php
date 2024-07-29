@@ -2,6 +2,8 @@
 
 namespace Simtabi\Pheg\Core\Exceptions;
 
-class ImageException extends \RuntimeException
+use RuntimeException;
+
+class ImageException extends RuntimeException
 {
 }

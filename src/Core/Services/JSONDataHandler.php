@@ -25,7 +25,8 @@ class JSONDataHandler
      */
     private static ?self $instance;
 
-    public static function getInstance() {
+    public static function getInstance(): JSONDataHandler|static|null
+    {
         if (isset(self::$instance) && !is_null(self::$instance)) {
             return self::$instance;
         } else {

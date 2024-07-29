@@ -2,6 +2,8 @@
 
 namespace Simtabi\Pheg\Core\Exceptions;
 
-class CannotReadExifData extends \Exception
+use Exception;
+
+class CannotReadExifData extends Exception
 {
 }

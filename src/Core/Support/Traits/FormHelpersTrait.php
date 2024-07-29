@@ -5,7 +5,7 @@ namespace Simtabi\Pheg\Core\Support\Traits;
 trait FormHelpersTrait
 {
 
-    public function getFormReady_Timezones($default = null)
+    public function getFormReadyTimezones(?string $default = null)
     {
         if (!empty($default)) {
             return $this->pheg->time()->getTimezones()['flat'][$default] ?? null;
@@ -14,7 +14,7 @@ trait FormHelpersTrait
         }
     }
 
-    public function getFormReady_DatetimeFormats($default = null, $type = 'long')
+    public function getFormReadyDatetimeFormats(?string $default = null, string $type = 'long'): array
     {
         $data = $this->pheg->arr()->fetch('datetime.'. trim($type), $this->getDatetimeFormats($default));
         $out  = [];
@@ -26,7 +26,7 @@ trait FormHelpersTrait
         return $out;
     }
 
-    public function getFormReady_DateFormats($default = null, $type = 'short')
+    public function getFormReadyDateFormats(?string $default = null, string $type = 'short'): array
     {
         $data = $this->pheg->arr()->fetch('date.'. trim($type), $this->getDatetimeFormats($default));
         $out  = [];
@@ -38,10 +38,10 @@ trait FormHelpersTrait
         return $out;
     }
 
-    public function getFormReady_TimeFormats($default = null, $type = 'short')
+    public function getFormReadyTimeFormats(?string $default = null, string $type = 'short'): array
     {
         $data = $this->pheg->arr()->fetch('time.'. trim($type), $this->getDatetimeFormats($default));
-        dd($data);
+
         $out  = [];
         if (!empty($data)) {
             foreach ($data as $k => $datum){
@@ -51,7 +51,7 @@ trait FormHelpersTrait
         return $out;
     }
 
-    public function getFormReady_JsFormats($default = null, $type = 'date')
+    public function getFormReadyJsFormats(?string $default = null, string $type = 'date'): array
     {
         $data = $this->pheg->arr()->fetch('js.'. trim($type), $this->getDatetimeFormats($default));
         $out  = [];

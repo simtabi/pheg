@@ -24,8 +24,8 @@ class Loader
     }
 
     /**
-     * @param null $fileNames
-     * @return array|mixed
+     * @param string|array|null $fileNames
+     * @return array
      */
     public function getData(string|array|null $fileNames = null): array
     {
@@ -55,6 +55,7 @@ class Loader
         if (!is_array($fileNames)) {
             $fileNames   = [$fileNames];
         }
+
         $this->fileNames = $fileNames;
         return $this;
     }

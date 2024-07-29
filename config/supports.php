@@ -1019,21 +1019,19 @@ return [
      */
     'notification_options' => [
         'frequency' => [
-            'time' => [
-                'always'      => "Always",
-                'when_online' => "Only when I'm online",
-            ],
             'frequency' => [
                 'everyday' => "Everyday",
                 'weekly'   => "Weekly",
                 'never'    => "Never",
             ],
             'time' => [
+                'when_online' => "Only when I'm online",
                 'immediately' => "Immediately",
-                'midnight'    => "Midnight",
+                'midnight'    => "Midnight (00:00)",
+                'always'      => "Always",
                 '6_am'        => "6 AM",
                 '9_am'        => "9 AM",
-                'noon'        => "Noon",
+                'noon'        => "Noon (12:00)",
                 '4_pm'        => "4 PM",
                 '6_pm'        => "6 PM",
                 '9_pm'        => "8 PM",

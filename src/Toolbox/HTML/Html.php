@@ -13,11 +13,13 @@ final class Html
 
     public function __construct() {}
 
-    public function bolderHtmlString($string, $type = 1){
+    public function bolderHtmlString($string, $type = 1): string
+    {
         return '<strong>'. (new Str)->makeItReadable($string, $type) .'</strong>';
     }
 
-    public function parseHTMLTags($tags, $enclose = true, $trim = false) {
+    public function parseHTMLTags($tags, $enclose = true, $trim = false): string
+    {
 
         // if empty
         if ((new Validators())->transfigure()->isEmpty($tags)){
@@ -57,32 +59,36 @@ final class Html
         return !empty($out) ? $out : '';
     }
 
-    public function nl2br($string)
+    public function nl2br($string): array|string
     {
         return str_replace("\n", '<br />', $string);
     }
 
-    public function formatTags($string, $splitter = ',', $notWanted = null){
+    public function formatTags($string, $splitter = ',', $notWanted = null): array|string|null
+    {
         $notWanted = empty($notWanted) ? '\\/:*?"<>;,|' : $notWanted;
         return preg_replace('{(.)\1+}','$1', str_replace(str_split($notWanted), $splitter, $string));
     }
 
-    public function bolderSprintf($argument, $wrapper){
+    public function bolderSprintf($argument, $wrapper): string
+    {
         $argument = '<strong>'. ucwords(strtolower(str_replace('_', ' ', $argument))) .'</strong>';
         return sprintf($wrapper, $argument);
     }
 
-    public function oddEvenClass(int $number){
+    public function oddEvenClass(int $number): string
+    {
         return strtolower((new Validators())->transfigure()->isNumberOdd($number) ? 'Even' : 'Odd');
     }
 
-    public function progressbar($done, $total, $info = "", $width = 50) {
+    public function progressbar($done, $total, $info = "", $width = 50): string
+    {
         $percentage = round(($done * 100) / $total);
         $bar        = round(($width * $percentage) / 100);
         return sprintf("%s%%[%s>%s]%s\r", $percentage, str_repeat("=", (int)$bar), str_repeat(" ", $width-$bar), $info);
     }
 
-    public function svgIcon($path, $iconClass = "", $svgClass = "")
+    public function svgIcon($path, $iconClass = "", $svgClass = ""): string
     {
 
         if ( ! file_exists($path)) {
@@ -178,7 +184,7 @@ final class Html
         return "<span class=". implode(" ", $cls) .">" . $string . "</span>";
     }
 
-    public function svgIconFromFile(string $request, string $filePath, ?string $class = null)
+    public function svgIconFromFile(string $request, string $filePath, ?string $class = null): ?string
     {
         $class = $class ?? '';
         $ref   = $filePath .'#' .$request;
@@ -212,7 +218,7 @@ final class Html
         }
         // Remove all but allowed tags.
         $stripped = strip_tags($markup, $tags);
-        // Remove class and style attributes (double quoted).
+        // Remove class and style attributes (double-quoted).
         $stripped = preg_replace('/(<[^>]+) (style|class)=".*?"/i', '$1', $stripped);
         // Remove class and style attributes (single quoted).
         $stripped = preg_replace('/(<[^>]+) (style|class)=\'.*?\'/i', '$1', $stripped);
@@ -232,7 +238,7 @@ final class Html
      *
      * @return string
      */
-    public function urlFromHtml($markup): bool|string
+    public function urlFromHtml(string $markup): bool|string
     {
         $string = $this->cleanHtml(trim($markup), ['<a>']);
         preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $string, $links);
@@ -244,7 +250,7 @@ final class Html
         }
     }
 
-    public function tagCloud($str, $minFontSize = 12, $maxFontSize = 30)
+    public function tagCloud(string $str, int $minFontSize = 12, int $maxFontSize = 30): array
     {
 
         // Store frequency of words in an array
@@ -298,7 +304,7 @@ final class Html
         return new Form;
     }
 
-   public function extractAndSplit(string $string, array $replacements = []): array
+    public function extractAndSplit(string $string, array $replacements = []): array
     {
         // Match all occurrences of text enclosed in square brackets
         preg_match_all("/\{(.*?)\}/", $string, $matches);
@@ -359,7 +365,7 @@ final class Html
         ];
     }
 
-   public function replacePlaceholdersAndCollect(string $content, array $replacements): array
+    public function replacePlaceholdersAndCollect(string $content, array $replacements): array
     {
         libxml_use_internal_errors(true); // Suppress libXML errors
 
@@ -412,7 +418,58 @@ final class Html
             return $dirty;
         }
 
-        return clean($dirty ?: '', $config);
+        return $this->clean($dirty ?: '', $config);
+    }
+
+    public function toHtmlAttributes(string $attributeName, array $attributes): string
+    {
+        if (empty($attributes)) {
+            return '';
+        }
+
+        $evaluated = [];
+        $results   = [];
+
+        foreach ($attributes as $key => $value) {
+            if (is_bool($value)) {
+                // For boolean values, use the key as the value if the condition is true
+                if ($value) {
+                    $evaluated[] = $key;
+                }
+            } else {
+                // For string values, add them directly to the result
+                $evaluated[] = $value;
+            }
+        }
+
+        if (!empty($evaluated)) {
+            $attributeName = strtolower(trim($attributeName));
+
+            foreach ($evaluated as $result) {
+                if ($attributeName === "class" || $attributeName === "classes" || $attributeName === "css") {
+                    $attributeName = "class";
+                }
+
+                if ($attributeName === "style" || $attributeName === "styles") {
+                    $attributeName = "style";
+                    $results[] = trim(rtrim($result, ";")) . ";";
+                } else {
+                    $results[] = trim($result);
+                }
+            }
+        }
+
+        return $attributeName . '="' . htmlspecialchars(implode(" ", $results)) . '"';
+    }
+
+    public function toClasses(array $classes): string
+    {
+        return $this->toHtmlAttributes('class', $classes);
+    }
+
+    public function toStyles(array $styles): string
+    {
+        return $this->toHtmlAttributes('style', $styles);
     }
 
 }
